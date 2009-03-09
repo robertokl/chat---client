@@ -21,7 +21,7 @@ import br.com.robertokl.chat.client.handlers.ServerComunicationHandler;
 import br.com.robertokl.chat.commoms.constants.Status;
 
 public class MainScreen extends JFrame {
-    
+
     // @jve:decl-index=0:
     private static final long serialVersionUID = 1L;
     private JPanel jContentPane = null;
@@ -30,7 +30,8 @@ public class MainScreen extends JFrame {
     private JComboBox comboStatus = null;
     private JTextField txtIn = null;
     private JButton buttonSend = null;
-    private static final ServerComunicationHandler SERVER_COMUNICATION_HANDLER = new ServerComunicationHandler();  //  @jve:decl-index=0:
+    private static final ServerComunicationHandler SERVER_COMUNICATION_HANDLER = new ServerComunicationHandler(); // @jve:decl-index=0:
+
     /**
      * This is the default constructor
      */
@@ -41,15 +42,15 @@ public class MainScreen extends JFrame {
 	    String host = JOptionPane.showInputDialog("Digite o host");
 	    String port = JOptionPane.showInputDialog("Digite a porta");
 	    String name = JOptionPane.showInputDialog("Digite um apelido");
-	    while(!name.matches("^[a-zA-Z ]+$")){
+	    while (!name.matches("^[a-zA-Z]+$")) {
 		JOptionPane.showMessageDialog(null, "Digite um apelido válido.", "Erro", JOptionPane.ERROR_MESSAGE);
 		name = JOptionPane.showInputDialog("Digite um apelido");
 	    }
 	    ServerComunicationHandler.SCREEN = this;
 	    SERVER_COMUNICATION_HANDLER.connect(host, port, name);
 	} catch (Exception e) {
-	    JOptionPane.showMessageDialog(this, "Não foi possível se conectar com o servidor.\n\n"
-		    + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+	    JOptionPane.showMessageDialog(this, "Não foi possível se conectar com o servidor.\n\n" + e.getMessage(),
+		    "Erro", JOptionPane.ERROR_MESSAGE);
 	}
     }
 
@@ -111,8 +112,10 @@ public class MainScreen extends JFrame {
 	    listConnecteds.setBounds(new Rectangle(556, 4, 179, 242));
 	    listConnecteds.addListSelectionListener(new ListSelectionListener() {
 		public void valueChanged(ListSelectionEvent e) {
-		    if (listConnecteds.getSelectedValue() == null) return;
-		    getTxtIn().setText("/pm " + listConnecteds.getSelectedValue().toString().trim() + " ");
+		    if (listConnecteds.getSelectedValue() == null)
+			return;
+		    getTxtIn()
+			    .setText("/pm " + removeStatus(listConnecteds.getSelectedValue().toString().trim()) + " ");
 		    getTxtIn().requestFocus();
 		}
 	    });
@@ -135,10 +138,9 @@ public class MainScreen extends JFrame {
 	    comboStatus.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent event) {
 		    try {
-			SERVER_COMUNICATION_HANDLER.changedStatus(comboStatus.getSelectedItem()
-				.toString());
+			SERVER_COMUNICATION_HANDLER.changedStatus(comboStatus.getSelectedItem().toString());
 		    } catch (Exception e) {
-			showErrorDialog(e);
+			showCommunicationErrorDialog(e);
 		    }
 		}
 	    });
@@ -179,19 +181,30 @@ public class MainScreen extends JFrame {
 	new MainScreen();
     }
 
-    private void showErrorDialog(Exception e) {
-	JOptionPane.showMessageDialog(null, "Erro ao enviar mensagem para o servidor:\n\n"
-		+ e.getMessage());
+    private void showCommunicationErrorDialog(Exception e) {
+	showErrorDialog("Erro ao enviar mensagem para o servidor:\n\n" + e.getMessage());
     }
     
+    public void showErrorDialog(String message){
+	JOptionPane.showMessageDialog(this, message, "Erro.", JOptionPane.ERROR_MESSAGE);
+    }
+
+    private String removeStatus(String name) {
+	if(name.matches("\\(.\\).*")){
+	    return name.substring(4);
+	}
+	return name;
+    }
+
     private class SendActionEventListener implements ActionListener {
 	public void actionPerformed(ActionEvent event) {
-	    if (getTxtIn().getText() == null || getTxtIn().getText().equals("")) return;
+	    if (getTxtIn().getText() == null || getTxtIn().getText().equals(""))
+		return;
 	    try {
 		SERVER_COMUNICATION_HANDLER.sendMessage(getTxtIn().getText());
 		getTxtIn().setText("");
 	    } catch (Exception e) {
-		showErrorDialog(e);
+		showCommunicationErrorDialog(e);
 	    }
 	}
     }

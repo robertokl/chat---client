@@ -29,4 +29,12 @@ public class ClientActionFactory extends ActionFactory {
 	return new SendMessageAction();
     }
 
+    protected Action getErrorAction() {
+	return new ErrorAction();
+    }
+
+    protected Action getAdminLoginAction() {
+	return new StatusChangeAction();
+    }
+
 }

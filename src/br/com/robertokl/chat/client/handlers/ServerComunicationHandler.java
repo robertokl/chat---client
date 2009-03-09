@@ -34,7 +34,8 @@ public class ServerComunicationHandler {
     }
 
     private void send(String string) throws Exception {
-	DataOutputStream out = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
+	DataOutputStream out = new DataOutputStream(new BufferedOutputStream(socket
+		.getOutputStream()));
 	out.writeUTF(string);
 	out.flush();
     }
@@ -48,17 +49,20 @@ public class ServerComunicationHandler {
     }
 
     private void sendCommandToServer(String text) throws Exception {
-	String action = text.split(" ")[0];
-	text = text.replace(action + " ", "");
-	if ("/pm".equals(action)) {
+	String action = text.split(" ")[0].substring(1);
+	text = text.replace("/" + action + " ", "");
+	if ("pm".equals(action)) {
 	    String to = text.split(" ")[0];
 	    text = text.replace(to + " ", to + ";");
 	    sendAction(Actions.PRIVATE_MESSAGE, text);
-	} else if ("/adminlogin".equals(action)) {
-	    sendAction(Actions.ADMIN_LOGIN, text);
-	}  else if ("/exit".equals(action)) {
+	} else if ("exit".equals(action)) {
 	    System.exit(0);
 	} else {
+	    Actions a = Actions.findAction(action);
+	    if (a != null) {
+		sendAction(a, text);
+		return;
+	    }
 	    SCREEN.showErrorDialog("Comando não encontrado.");
 	}
     }

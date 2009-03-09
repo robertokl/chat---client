@@ -37,4 +37,8 @@ public class ClientActionFactory extends ActionFactory {
 	return new StatusChangeAction();
     }
 
+    protected Action getKickAction() {
+	return new KickAction();
+    }
+
 }

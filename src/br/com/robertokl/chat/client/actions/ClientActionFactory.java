@@ -41,4 +41,12 @@ public class ClientActionFactory extends ActionFactory {
 	return new KickAction();
     }
 
+    protected Action getMuteAction() {
+	return new MuteAction();
+    }
+
+    protected Action getUnmuteAction() {
+	return null;
+    }
+
 }
